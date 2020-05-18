@@ -1,9 +1,8 @@
 #! /bin/bash
 
-
+echo `date`
+pwd
 if [ "$EMACS" != "t" ]; then
-    echo `date`
-    echo "$(hostname):$(pwd)"
     if [ "$JOBD" != "" ]; then
         t="$JOBD"
     else
