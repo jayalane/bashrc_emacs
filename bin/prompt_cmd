@@ -1,0 +1,16 @@
+#! /bin/bash
+
+
+if [ "$EMACS" != "t" ]; then
+    echo `date`
+    echo "$(hostname):$(pwd)"
+    if [ "$JOBD" != "" ]; then
+        t="$JOBD"
+    else
+        t="untitled"
+    fi
+    tmux rename-window -t${TMUX_PANE} $t > /dev/null 2> /dev/null
+else
+    echo `date`
+fi
+echo `date` >> ~/bin/working
