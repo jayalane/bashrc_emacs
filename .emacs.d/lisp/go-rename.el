@@ -1,1 +1,1 @@
-/Users/c60932a/.emacs.d/golang/go-rename.el
+../golang/go-rename.el

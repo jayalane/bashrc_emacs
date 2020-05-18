@@ -1,1 +1,1 @@
-/Users/c60932a/.emacs.d/golang/go-guru.el
+../golang/go-guru.el

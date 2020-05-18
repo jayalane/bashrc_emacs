@@ -1,1 +1,1 @@
-/Users/c60932a/.emacs.d/golang/go-mode.el
+../golang/go-mode.el
