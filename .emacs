@@ -86,6 +86,7 @@ There are two things you can do about this warning:
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+'(compile-command "go fmt ; golint ; go build ; go test")
  '(package-selected-packages (quote (memory-usage))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
