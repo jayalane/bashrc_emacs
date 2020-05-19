@@ -26,6 +26,7 @@ There are two things you can do about this warning:
 
 (setq-default tab-width 4) ; emacs 23.1 to 26 default to 8
 
+
 (push "~/.emacs.d/lisp" load-path)
 
 (require 'hcl)
@@ -69,12 +70,6 @@ There are two things you can do about this warning:
   (add-to-list 'flymake-allowed-file-name-masks
                '("\\.py\\'" flymake-pyflakes-init)))
 
-(setenv "GOPATH" "/Users/c60932a/go")
-(setenv "PATH" (concat (getenv "PATH") ":/usr/local/bin:/Users/c60932a/bin:/usr/local/go/bin:/Users/c60932a/go/bin"))
-(setq exec-path (append exec-path '("/usr/local/bin")))
-(setq exec-path (append exec-path '("/Users/c60932a/bin")))
-(setq exec-path (append exec-path '("/Users/c60932a/go/bin")))
-(setq exec-path (append exec-path '("/usr/local/bin/go")))
 
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
