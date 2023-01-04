@@ -1,3 +1,5 @@
+;;; package: dot emacs
+;;; Commentary: Chris Lane .emacs
 
 (require 'package)
 (let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
@@ -58,7 +60,8 @@ There are two things you can do about this warning:
 	    )))
   
 (setq default-frame-alist initial-frame-alist)
-  
+
+(require 'flymake)
 (when (load "flymake" t)
   (defun flymake-pyflakes-init ()
     (let* ((temp-file (flymake-init-create-temp-buffer-copy
@@ -66,10 +69,12 @@ There are two things you can do about this warning:
            (local-file (file-relative-name
                         temp-file
                         (file-name-directory buffer-file-name))))
-      (list "/Users/c60932a/bin/pycheckers.sh"  (list local-file))))
+      (list "/Users/chlane/bin/pycheckers.sh"  (list local-file))))
   (add-to-list 'flymake-allowed-file-name-masks
                '("\\.py\\'" flymake-pyflakes-init)))
 
+
+(add-hook 'find-file-hook 'flymake-find-file-hook)
 
 ;; Added by Package.el.  This must come before configurations of
 ;; installed packages.  Don't delete this line.  If you don't want it,
@@ -86,8 +91,10 @@ There are two things you can do about this warning:
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(compile-command "go fmt ; golint ; go build ; go test")
- '(package-selected-packages '(golden-ratio go-dlv mines magit memory-usage)))
+ '(compile-command
+   "make ; go mod init ; go mod tidy ; go fmt ; golint ; go vet ; go build ; golangci-lint run . ; go test -v -v -race")
+ '(package-selected-packages
+   '(yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
