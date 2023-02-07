@@ -45,6 +45,13 @@ There are two things you can do about this warning:
 (global-set-key "\C-xg" 'goto-line)
 (global-set-key "\C-xm" 'compile)
 
+(setq backup-directory-alist '(("." . "~/.emacs.d/backup"))
+  backup-by-copying t    ; Don't delink hardlinks
+  version-control t      ; Use version numbers on backups
+  delete-old-versions t  ; Automatically delete excess backups
+  kept-new-versions 20   ; how many of the newest versions to keep
+  kept-old-versions 5    ; and how many of the old
+  )
 
 (require 'go-mode)
 (add-hook 'before-save-hook 'gofmt-before-save)
@@ -92,7 +99,7 @@ There are two things you can do about this warning:
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(compile-command
-   "make ; go mod init ; go mod tidy ; go fmt ; golint ; go vet ; go build ; golangci-lint run . ; go test -v -v -race")
+   "make ; go mod init ; go mod tidy ; go fmt ; golint ; go vet ; go build -gcflags \"-m -l\" . ; golangci-lint run . ; go test -v -v -race")
  '(package-selected-packages
    '(yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage)))
 (custom-set-faces

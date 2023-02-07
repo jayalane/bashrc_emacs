@@ -3,6 +3,10 @@
 # ulimit -l 0
 #ulimit -s 20480
 
+export ORACLE_HOME=/Users/chlane/instantclient_11_2/
+export REQUESTS_CA_BUNDLE='/usr/local/etc/openssl/certs/combined_cacerts.pem'
+export SSL_CERT_FILE='/usr/local/etc/openssl/certs/combined_cacerts.pem'
+
 if [ "$INSIDE_EMACS" != "" ] ; then
     export EMACS=t
 fi
@@ -14,12 +18,14 @@ fi
 if [[ -d "$HOME/.okta/bin" && ":$PATH:" != *":$HOME/.okta/bin:"* ]]; then
     PATH="$HOME/.okta/bin:$PATH"
 fi
+export PATH=$PATH:~/homebrew/bin
+export PATH=$PATH:/usr/local/texlive/2021basic/bin/universal-darwin/
 export PATH=/Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_14:$PATH
 export PATH=/anaconda3/bin:$PATH
 export PATH=/usr/local/bin:$PATH
 export PATH=/usr/local/go/bin/:$PATH
 export PATH=~/google-cloud-sdk/bin:$PATH
-export PATH=$PATH:~/bin:/Users/c60932a/Library//Python/3.7/bin
+export PATH=$PATH:~/bin:/Users/chlane/Library//Python/3.7/bin
 export GOPATH=~/go
 export PATH=$PATH:$GOPATH/bin
 export WINEARCH=win32
@@ -79,14 +85,14 @@ export PAGER=/usr/bin/less
 ignoreeof=10
 # set up the color-ls environment variables:
 if [ "$EMACS" = "t" ] || [ "$INSIDE_EMACS" != "" ] ; then
-  alias ls='ls -larthdF --color'
+#  alias ls='ls -larthdF --color'
   export PAGER=/bin/cat
   export EMACS=t
   echo "Emacs rules."
   PS1='\W($SHLVL:\!)\$ '
 else 
   eval `/usr/bin/dircolors -b`
-  alias ls='ls -F -lhartd'
+#  alias ls='ls -F -lhartd'
   PS1='\W($SHLVL:\!)\$ '
 fi
 PS2='> '
