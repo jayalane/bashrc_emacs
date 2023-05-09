@@ -3,6 +3,8 @@
 # ulimit -l 0
 #ulimit -s 20480
 
+export PY3=1
+
 export ORACLE_HOME=/Users/chlane/instantclient_11_2/
 export REQUESTS_CA_BUNDLE='/usr/local/etc/openssl/certs/combined_cacerts.pem'
 export SSL_CERT_FILE='/usr/local/etc/openssl/certs/combined_cacerts.pem'
