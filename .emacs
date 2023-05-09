@@ -99,9 +99,9 @@ There are two things you can do about this warning:
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(compile-command
-   "make ; go mod init ; go mod tidy ; go fmt ; golint ; go vet ; go build -gcflags \"-m -l\" . ; golangci-lint run . ; go test -v -v -race")
+   "make ; go mod init ; go mod tidy ; go fmt ; golint ; go vet ; go build  ; golangci-lint run . ; staticcheck ; go test -v -v -race -coverprofile fmtcoverage.html")
  '(package-selected-packages
-   '(yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage)))
+   '(w3m disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -126,7 +126,9 @@ apps are not started from a shell."
 
 (set-exec-path-from-shell-PATH)
 
-
+;; (setenv "namespace" "test")
+;; (setenv "namespace" "local")
+(setenv "AZ" "local1")
 (defun comint-password-function-impl (a)
   "interact password"
   "bad-password")
@@ -135,3 +137,40 @@ apps are not started from a shell."
 
 (comint-password-function-impl 'a)
 (put 'scroll-left 'disabled nil)
+
+;; chat GPT4 stuff
+
+(defun find-count-api ()
+  "Find and change 'count.Incr' to 'count.IncrSync'
+   and 'count.IncrSuffix' to 'count.IncrSyncSuffix'
+   in the current Go buffer."
+  (interactive)
+  (when (derived-mode-p 'go-mode)
+    (save-excursion
+      (goto-char (point-min))
+      (while (search-forward "count.Incr" nil t)
+        (replace-match "count.IncrSync" nil t))
+      (goto-char (point-min))
+      (while (search-forward "count.IncrSuffix" nil t)
+        (replace-match "count.IncrSyncSuffix" nil t)))
+    (message "API replacements complete."))
+  (unless (derived-mode-p 'go-mode)
+    (message "This function should be called in a Go buffer.")))
+
+
+(defun format-number-with-commas (number)
+  "Format NUMBER with commas as thousand separators."
+  (let* ((number-str (number-to-string number))
+         (integer-part (substring number-str 0 (or (string-match "\\." number-str) (length number-str))))
+         (fractional-part (if (string-match "\\." number-str) (substring number-str (match-beginning 0)) ""))
+         (result ""))
+    (dotimes (i (length integer-part) (concat result fractional-part))
+      (setq result (concat (char-to-string (aref integer-part (- (length integer-part) (1+ i)))) result))
+      (when (and (= (mod (1+ i) 3) 0) (< i (1- (length integer-part))))
+        (setq result (concat "," result))))))
+
+(defun insert-number-with-commas (number)
+  "Insert NUMBER with commas as thousand separators on the next line in the current buffer."
+  (let ((formatted-number (format-number-with-commas number)))
+    (end-of-line)
+    (insert "\n" formatted-number)))
