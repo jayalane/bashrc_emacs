@@ -99,9 +99,9 @@ There are two things you can do about this warning:
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(compile-command
-   "make ; go mod init ; go mod tidy ; go fmt ; golint ; go vet ; go build  ; golangci-lint run . ; staticcheck ; go test -v -v -race -coverprofile fmtcoverage.html")
+   "cd ~/go/src/github.paypal.com/chlane/rlcountserv/ ; namespace=test make")
  '(package-selected-packages
-   '(w3m disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru)))
+   '(company-go company w3m disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -129,6 +129,7 @@ apps are not started from a shell."
 ;; (setenv "namespace" "test")
 ;; (setenv "namespace" "local")
 (setenv "AZ" "local1")
+(setenv "GODEBUG" "x509sha1=1")
 (defun comint-password-function-impl (a)
   "interact password"
   "bad-password")
@@ -139,6 +140,11 @@ apps are not started from a shell."
 (put 'scroll-left 'disabled nil)
 
 ;; chat GPT4 stuff
+
+(defun proportion-of-total (numbers)
+  "Return a list with each number replaced by its proportion of the total sum of the list."
+  (let ((total (apply '+ numbers)))
+    (mapcar (lambda (n) (/ (float n) total)) numbers)))
 
 (defun find-count-api ()
   "Find and change 'count.Incr' to 'count.IncrSync'
@@ -174,3 +180,9 @@ apps are not started from a shell."
   (let ((formatted-number (format-number-with-commas number)))
     (end-of-line)
     (insert "\n" formatted-number)))
+
+
+(setq lsp-go-use-gofumpt t)
+
+;;; .emacs ends here
+
