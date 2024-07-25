@@ -18,6 +18,7 @@ There are two things you can do about this warning:
   (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
     (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
+(message "loading .emacs")
 
 (sleep-for 1)
 (package-initialize)
@@ -25,22 +26,41 @@ There are two things you can do about this warning:
 (setq slime-lisp-implementations
       '((sbcl ("/usr/local/bin/sbcl" "--control-stack-size 1000") :coding-system utf-8-unix)))
 (setq slime-contribs '(slime-fancy))
+(cond ((or (boundp 'window-system) (window-system)) (message "window system"))
+      t (message "No window system"))
 
+(setq initial-major-mode 'emacs-lisp-mode)
 (setq-default tab-width 4) ; emacs 23.1 to 26 default to 8
 (setf dired-kill-when-opening-new-dired-buffer t)
 
 (push "~/.emacs.d/lisp" load-path)
+(setq vc-make-backup-files t)
+(setq version-control t)
+(add-to-list 'backup-directory-alist '("." . ".~"))
+(setq kept-old-versions 10)
+(setq kept-new-versions 10)
 
-(require 'hcl)
-(require 'terraform)
+(setq auto-save-default t)
+(setq auto_save-interval 5)
+(setq auto_save-timeout 5)
+(setq mail-from-style 'system-default)
+(setq scroll-step 1)
+(setq comint-input-ring-size 10000000)
+(setq comint-buffer-maximum-size 500000)
 
-;;(add-hook 'terraform-mode-hook
-;;		  (function (lambda ()
-;;					  (add-hook (make-local-variable 'after-save-hook)
-;;                              (function (lambda (
-;; note:  the golang package has a good example here but it's complicated
+(add-hook 'comint-output-filter-functions
+          'comint-truncate-buffer)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 (server-start)
+
+(setq load-path (cons "~/emacs" load-path))
+(setq load-path (cons "~/emacs/tnt" load-path))
+(setq load-path (cons "~/emacs/pcl-cvs" load-path))
+(setq load-path (cons "~/emacs/slime" load-path))
+(setq load-path (cons "~/emacs/erc-cvs" load-path))
+;(setq load-path (cons "~/emacs/tramp" load-path))
+;(setq load-path (cons "~/emacs/ess/lisp" load-path))
 
 (global-set-key "\C-xg" 'goto-line)
 (global-set-key "\C-xm" 'compile)
@@ -63,10 +83,45 @@ There are two things you can do about this warning:
 	      (background-color . "black")
 	      (cursor-color . "purple")
 	      (foreground-color . "green"))
+		)))
 
-	    )))
+(require 'sudoku)
+(require 'url)
+
+(add-to-list 'auto-mode-alist '("\\.js$" . javascript-mode))
+(add-to-list 'auto-mode-alist '("\\.fxml$" . xml-mode))
+(add-to-list 'auto-mode-alist '("\\.sdl$" . xml-mode))
+(add-to-list 'auto-mode-alist '("\\.oml$" . xml-mode))
+(add-to-list 'auto-mode-alist '("\\.mdf$" . xml-mode))
+(add-to-list 'auto-mode-alist '("\\.py" . python-mode))
+
+(require 'show-wspace)
+
+(defmacro try-this (&rest body)
+  `(unwind-protect
+       (let (retval (gensym))
+         (condition-case ex
+             (setq retval (progn ,@body))
+           ('error
+            (message (format "Caught exception: [%s]" ex))
+            (setq retval (cons 'exception (list ex)))))
+         retval)))
+
+(require 'tramp)
+(setq tramp-default-method "ssh")
+(setq tramp-verbose 10)
+(setq tramp-debug-bufer t)
+
+(setq tcl-default-application "tclsh")
+(setq blink-matching-paren-distance 24000)
+
+(require 'slime)
+(setq inferior-lisp-program "/usr/local/bin/sbcl")
+(slime-setup)
   
 (setq default-frame-alist initial-frame-alist)
+(autoload 'calculator "calculator"
+     "Run the Emacs calculator." t)
 
 (require 'flymake)
 (when (load "flymake" t)
@@ -76,10 +131,7 @@ There are two things you can do about this warning:
            (local-file (file-relative-name
                         temp-file
                         (file-name-directory buffer-file-name))))
-      (list "/Users/chlane/bin/pycheckers.sh"  (list local-file))))
-  (add-to-list 'flymake-allowed-file-name-masks
-               '("\\.py\\'" flymake-pyflakes-init)))
-
+      (list "/Users/cjayalane/bin/pycheckers.sh"  (list local-file)))))
 
 (add-hook 'find-file-hook 'flymake-find-file-hook)
 
@@ -91,6 +143,7 @@ There are two things you can do about this warning:
 ;    (progn (
 ;	    (package-initialize)
 ;)))
+
 
 (put 'downcase-region 'disabled nil)
 (custom-set-variables
@@ -110,6 +163,7 @@ There are two things you can do about this warning:
  )
 (put 'upcase-region 'disabled nil)
 
+(setq scheme-program-name "scheme")
 (defun set-exec-path-from-shell-PATH ()
   "Set up Emacs' `exec-path' and PATH environment variable to match
 that used by the user's shell.
@@ -124,6 +178,22 @@ apps are not started from a shell."
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
 
+(setq indent-tabs-mode nil)
+(setq-default indent-tabs-mode nil)
+(display-time)
+(setq-default ispell-program-name "aspell")
+;;(defun start-bigr ()
+;; "Start R for ESS with big parameters"
+;; (R "--min-vsize=500M --min-nsize=12M")
+;;)
+;; mail-crypt lines (pgp integration)
+;(autoload 'mc-install-write-mode "mailcrypt" nil t)
+;(autoload 'mc-install-read-mode "mailcrypt" nil t)
+;(add-hook 'mail-mode-hook 'mc-install-write-mode)
+;(add-hook 'rmail-mode-hook 'mc-install-read-mode)
+;(add-hook 'rmail-summary-mode-hook 'mc-install-read-mode)
+;(add-hook 'gnus-summary-mode-hook 'mc-install-read-mode)
+;(add-hook 'news-reply-mode-hook 'mc-install-write-mode)
 (set-exec-path-from-shell-PATH)
 
 ;; (setenv "namespace" "test")
@@ -139,12 +209,18 @@ apps are not started from a shell."
 (comint-password-function-impl 'a)
 (put 'scroll-left 'disabled nil)
 
+(defun mapply (func args)
+  (dolist (someargs args)
+    (apply func someargs)))
 ;; chat GPT4 stuff
+(defun mapply (func args)
+  (dolist (someargs args)
+    (apply func someargs)))
 
-(defun proportion-of-total (numbers)
-  "Return a list with each number replaced by its proportion of the total sum of the list."
-  (let ((total (apply '+ numbers)))
-    (mapcar (lambda (n) (/ (float n) total)) numbers)))
+(mapply 'add-hook
+        '((python-mode-hook show-ws-highlight-tabs)
+          (python-mode-hook
+           (lambda () (if (not (null buffer-file-name)) (flymake-mode))))))
 
 (defun find-count-api ()
   "Find and change 'count.Incr' to 'count.IncrSync'
