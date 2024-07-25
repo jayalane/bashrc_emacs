@@ -1,7 +1,7 @@
-# commands common to all logins
-#ulimit -n 1024
-# ulimit -l 0
-#ulimit -s 20480
+# ~/.bashrc
+# sourced in at shell startup time.
+# this file is part of the ppdev environment.
+# DO NOT EDIT - instead, put customizations in ~/.bashrc.custom .
 
 export PY3=1
 
