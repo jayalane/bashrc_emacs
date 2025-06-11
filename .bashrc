@@ -1,4 +1,8 @@
 # ~/.bashrc
+### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
+export PATH="/Users/chlane/.rd/bin:$PATH"
+### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+
 # sourced in at shell startup time.
 # this file is part of the ppdev environment.
 # DO NOT EDIT - instead, put customizations in ~/.bashrc.custom .
@@ -35,7 +39,7 @@ export WINEPREFIX="/home/lanstin/.wine"
 export WINE=wine-development
 export TZ=US/Pacific
 
-if [[ `hostname -s` = "hyperlvs40" ]] ; then
+if [[ $(hostname -s) = "hyperlvs40" ]] ; then
     if [[ "$-" = "*i*" ]] ; then 
        echo "Skipping .bashrc"
     fi
@@ -47,7 +51,6 @@ export GEVENT_RESOLVER=ares
 export CLASSPATH=$CLASSPATH:/opt/tomcat5/common/lib
 export MANPATH=/usr/man:/usr/local/man:/usr/share/man:/usr/X11/man:/sw/share/man
 export PATH="/x/opt/pp/bin:$PATH:~/bin:/usr/local/bin:."
-LESS="-MM -R"
 
 # export TZ=Asia/Calcutta
 export TZ=US/Pacific
@@ -57,8 +60,9 @@ fi
 shopt -s histappend
 export HISTSIZE=200000
 #export PROMPT_COMMAND="history -a; history -c; history -r;$PROMPT_COMMAND"
-export EDITOR=
-export HN=`hostname` 
+export EDITOR=emacsclient
+HN=$(hostname)
+export HN
 unset PYTHONHOME
 unset PYTHONPATH
 unset PYTHONBIN
@@ -80,21 +84,18 @@ fi
 # I had problems using 'eval tset' instead of 'TERM=', but you might want to 
 # try it anyway. I think with the right /etc/termcap it would work great.
 # eval `tset -sQ "$TERM"`
-if [ "$TERM" = "" -o "$TERM" = "unknown" ]; then
+if [ "$TERM" = "" ] ||  [ "$TERM" = "unknown" ]; then
  TERM=xterm
 fi
 export PAGER=/usr/bin/less
-ignoreeof=10
+
 # set up the color-ls environment variables:
 if [ "$EMACS" = "t" ] || [ "$INSIDE_EMACS" != "" ] ; then
-#  alias ls='ls -larthdF --color'
   export PAGER=/bin/cat
   export EMACS=t
   echo "Emacs rules."
   PS1='\W($SHLVL:\!)\$ '
 else 
-  eval `/usr/bin/dircolors -b`
-#  alias ls='ls -F -lhartd'
   PS1='\W($SHLVL:\!)\$ '
 fi
 PS2='> '
@@ -106,11 +107,7 @@ alias su='su -'
 
 alias lock='xscreensaver-command -lock'
 
-if [ -f /sw/bin/init.sh ]; then 
-    . /sw/bin/init.sh
-fi
-
-if [ $TERM = "linux" ]
+if [ "$TERM" = "linux" ]
 then
      unicode_start
 fi
@@ -130,7 +127,7 @@ case "$-" in
                 if [ "$Atmuxsession" == "" ] ; then
                     tmux
                 else
-                    tmux attach-session -t $Atmuxsession
+                    tmux attach-session -t "$Atmuxsession"
                 fi
             fi 
         fi

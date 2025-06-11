@@ -48,6 +48,9 @@ There are two things you can do about this warning:
 (setq comint-input-ring-size 10000000)
 (setq comint-buffer-maximum-size 500000)
 
+(setq mastodon-active-user "jayalane")
+(setq mastodon-instance-url "https://mastodon.online")
+
 (add-hook 'comint-output-filter-functions
           'comint-truncate-buffer)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
@@ -95,7 +98,7 @@ There are two things you can do about this warning:
 (add-to-list 'auto-mode-alist '("\\.mdf$" . xml-mode))
 (add-to-list 'auto-mode-alist '("\\.py" . python-mode))
 
-(require 'show-wspace)
+;;(require 'show-wspace)
 
 (defmacro try-this (&rest body)
   `(unwind-protect
@@ -198,7 +201,7 @@ apps are not started from a shell."
 
 ;; (setenv "namespace" "test")
 ;; (setenv "namespace" "local")
-(setenv "AZ" "local1")
+(setenv "AZ" "ccg01")
 (setenv "GODEBUG" "x509sha1=1")
 (defun comint-password-function-impl (a)
   "interact password"
@@ -208,6 +211,24 @@ apps are not started from a shell."
 
 (comint-password-function-impl 'a)
 (put 'scroll-left 'disabled nil)
+
+(defun human-text-on ()
+  "Turn on human text options."
+  (turn-on-visual-line-mode)
+  (display-line-numbers-mode)
+  )
+
+(defvar my-visual-line-modes
+  '(text-mode-hook
+    prog-mode-hook
+    shell-mode-hook
+    eshell-mode-hook
+    go-mode-hook))
+
+;; Enable visual-line-mode and line numbers for specific modes
+(dolist (mode my-visual-line-modes)
+  (add-hook mode (lambda ()
+                   (human-text-on))))
 
 (defun mapply (func args)
   (dolist (someargs args)
