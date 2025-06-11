@@ -221,6 +221,7 @@ apps are not started from a shell."
 (defvar my-visual-line-modes
   '(text-mode-hook
     prog-mode-hook
+    comint-mode-hook
     shell-mode-hook
     eshell-mode-hook
     go-mode-hook))
