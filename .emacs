@@ -18,6 +18,7 @@ There are two things you can do about this warning:
   (when (< emacs-major-version 24)
     ;; For important compatibility libraries like cl-lib
     (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
+(setq org-todo-keywords '((type "TODO" "WONT" "DONE")))
 (message "loading .emacs")
 
 (sleep-for 1)
@@ -48,6 +49,18 @@ There are two things you can do about this warning:
 (setq comint-input-ring-size 10000000)
 (setq comint-buffer-maximum-size 500000)
 
+(add-hook 'comint-output-filter-functions
+          'comint-truncate-buffer)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+(setq auto-save-default t)
+(setq auto_save-interval 5)
+(setq auto_save-timeout 5)
+(setq mail-from-style 'system-default)
+(setq scroll-step 1)
+(setq comint-input-ring-size 10000000)
+(setq comint-buffer-maximum-size 500000)
+
 (setq mastodon-active-user "jayalane")
 (setq mastodon-instance-url "https://mastodon.online")
 
@@ -55,7 +68,20 @@ There are two things you can do about this warning:
           'comint-truncate-buffer)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
-(server-start)
+(require 'server)
+
+(add-hook 'after-init-hook
+          (lambda ()
+            (unless (server-running-p)
+              (server-start))))
+
+(setq load-path (cons "~/emacs" load-path))
+(setq load-path (cons "~/emacs/tnt" load-path))
+(setq load-path (cons "~/emacs/pcl-cvs" load-path))
+(setq load-path (cons "~/emacs/slime" load-path))
+(setq load-path (cons "~/emacs/erc-cvs" load-path))
+;(setq load-path (cons "~/emacs/tramp" load-path))
+;(setq load-path (cons "~/emacs/ess/lisp" load-path))
 
 (setq load-path (cons "~/emacs" load-path))
 (setq load-path (cons "~/emacs/tnt" load-path))
@@ -81,7 +107,7 @@ There are two things you can do about this warning:
 
 (if (display-graphic-p)
     (progn
-      (setq initial-frame-alist
+      (setq default-frame-alist
 	    '(
 	      (background-color . "black")
 	      (cursor-color . "purple")
@@ -123,6 +149,7 @@ There are two things you can do about this warning:
 (slime-setup)
   
 (setq default-frame-alist initial-frame-alist)
+  
 (autoload 'calculator "calculator"
      "Run the Emacs calculator." t)
 
@@ -134,7 +161,9 @@ There are two things you can do about this warning:
            (local-file (file-relative-name
                         temp-file
                         (file-name-directory buffer-file-name))))
-      (list "/Users/cjayalane/bin/pycheckers.sh"  (list local-file)))))
+      (list "/home/jayalane/bin/pycheckers.sh"  (list local-file))))
+  (add-to-list 'flymake-allowed-file-name-masks
+               '("\\.py\\'" flymake-pyflakes-init)))
 
 (add-hook 'find-file-hook 'flymake-find-file-hook)
 
@@ -157,7 +186,16 @@ There are two things you can do about this warning:
  '(compile-command
    "cd ~/go/src/github.paypal.com/chlane/rlcountserv/ ; namespace=test make")
  '(package-selected-packages
-   '(company-go company w3m disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru)))
+   '(protobuf-mode company-go company w3m disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru matlab-mode magit nov latex-preview-pane latex-math-preview latex-extra lean-mode flycheck-golangci-lint lsp-latex tree-sitter go-stacktracer go-complete go-autocomplete go-expr-completion go-gopath go-dlv ess sudoku slime memory-usage)))
+
+
+(defun remove-entry (key lst)
+  "Remove the association with KEY from LST. - by chatGPT"
+  (delete (assoc key lst) lst))
+
+(require 'latex)
+(setq LaTeX-indent-environment-list (remove-entry "align*" LaTeX-indent-environment-list))
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -231,6 +269,9 @@ apps are not started from a shell."
   (add-hook mode (lambda ()
                    (human-text-on))))
 
+(defun magit-git-executable ()
+	   return "/usr/bin/git")
+
 (defun mapply (func args)
   (dolist (someargs args)
     (apply func someargs)))
@@ -276,6 +317,7 @@ apps are not started from a shell."
 (defun insert-number-with-commas (number)
   "Insert NUMBER with commas as thousand separators on the next line in the current buffer."
   (let ((formatted-number (format-number-with-commas number)))
+    (interactive)
     (end-of-line)
     (insert "\n" formatted-number)))
 
