@@ -34,6 +34,7 @@ export PATH=~/google-cloud-sdk/bin:$PATH
 export PATH=$PATH:~/bin:/Users/chlane/Library//Python/3.7/bin
 export GOPATH=~/go
 export PATH=$PATH:$GOPATH/bin
+export PATH=$PATH:~/.local/bin
 export WINEARCH=win32
 export WINEPREFIX="/home/lanstin/.wine"
 export WINE=wine-development
