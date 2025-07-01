@@ -9,6 +9,7 @@ export PATH="/Users/chlane/.rd/bin:$PATH"
 
 export PY3=1
 
+export CLFAGS="-g -ggdb"
 export ORACLE_HOME=/Users/chlane/instantclient_11_2/
 export REQUESTS_CA_BUNDLE='/usr/local/etc/openssl/certs/combined_cacerts.pem'
 export SSL_CERT_FILE='/usr/local/etc/openssl/certs/combined_cacerts.pem'
@@ -136,3 +137,4 @@ case "$-" in
 esac
 
 fi
+. "$HOME/.cargo/env"
