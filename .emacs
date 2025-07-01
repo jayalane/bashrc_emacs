@@ -98,7 +98,7 @@ There are two things you can do about this warning:
 (add-to-list 'auto-mode-alist '("\\.mdf$" . xml-mode))
 (add-to-list 'auto-mode-alist '("\\.py" . python-mode))
 
-;;(require 'show-wspace)
+(require 'show-wspace)
 
 (defmacro try-this (&rest body)
   `(unwind-protect
@@ -240,7 +240,7 @@ apps are not started from a shell."
     (apply func someargs)))
 
 (mapply 'add-hook
-        '((python-mode-hook show-ws-highlight-tabs)
+        '((python-mode-hook ws-highlight-tabs)
           (python-mode-hook
            (lambda () (if (not (null buffer-file-name)) (flymake-mode))))))
 
