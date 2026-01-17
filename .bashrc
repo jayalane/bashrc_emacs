@@ -40,7 +40,10 @@ export PATH=$PATH:~/.local/bin
 export WINEARCH=win32
 export WINEPREFIX="/home/lanstin/.wine"
 export WINE=wine-development
-export TZ=US/Pacific
+#export TZ=Asia/Colcutta
+
+# WTF dashboard GitHub token (read from .netrc)
+export WTF_GITHUB_TOKEN=$(awk '/machine github.com/{for(i=1;i<=NF;i++)if($i=="password")print $(i+1)}' ~/.netrc 2>/dev/null)
 
 if [[ $(hostname -s) = "hyperlvs40" ]] ; then
     if [[ "$-" = "*i*" ]] ; then 
@@ -55,7 +58,7 @@ export CLASSPATH=$CLASSPATH:/opt/tomcat5/common/lib
 export MANPATH=/usr/man:/usr/local/man:/usr/share/man:/usr/X11/man:/sw/share/man
 export PATH="/x/opt/pp/bin:$PATH:~/bin:/usr/local/bin:."
 
-# export TZ=Asia/Calcutta
+export TZ=Asia/Calcutta
 export TZ=US/Pacific
 if [[ $(uname) == "Darwin" ]] ; then 
     export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
@@ -130,7 +133,7 @@ alias vim='vim -X'
 
 alias su='su -'
 
-alias lock='xscreensaver-command -lock'
+alias lock='loginctl lock-session'
 
 if [ "$TERM" = "linux" ]
 then

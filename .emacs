@@ -148,7 +148,7 @@ There are two things you can do about this warning:
 (setq inferior-lisp-program "/usr/local/bin/sbcl")
 (slime-setup)
   
-;;(setq default-frame-alist initial-frame-alist)
+;; (setq default-frame-alist initial-frame-alist)
   
 (autoload 'calculator "calculator"
      "Run the Emacs calculator." t)
@@ -341,7 +341,7 @@ apps are not started from a shell."
                    (human-text-on))))
 
 (defun magit-git-executable ()
-	   return "/usr/bin/git")
+  "/usr/bin/git")
 
 (defun mapply (func args)
   (dolist (someargs args)
