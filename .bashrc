@@ -25,7 +25,7 @@ fi
 if [[ -d "$HOME/.okta/bin" && ":$PATH:" != *":$HOME/.okta/bin:"* ]]; then
     PATH="$HOME/.okta/bin:$PATH"
 fi
-export PATH=$PATH:~/homebrew/bin
+export PATH=~/.local/bin:$PATH:~/homebrew/bin
 export PATH=$PATH:/usr/local/texlive/2021basic/bin/universal-darwin/
 export PATH=/Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_14:$PATH
 export PATH=/anaconda3/bin:$PATH
