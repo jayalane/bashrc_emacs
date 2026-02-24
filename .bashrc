@@ -34,6 +34,7 @@ export PATH=/usr/local/go/bin/:$PATH
 export PATH=~/google-cloud-sdk/bin:$PATH
 export PATH=$PATH:~/bin:/Users/chlane/Library//Python/3.7/bin
 export GOPATH=~/go
+
 export PATH=$PATH:$GOPATH/bin
 export PATH=$PATH:~/.local/bin
 export WINEARCH=win32
@@ -57,7 +58,29 @@ export PATH="/x/opt/pp/bin:$PATH:~/bin:/usr/local/bin:."
 # export TZ=Asia/Calcutta
 export TZ=US/Pacific
 if [[ $(uname) == "Darwin" ]] ; then 
+    export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
+    # Start agent if no working agent exists at the fixed path
+    ssh-add -l &>/dev/null
+    if [ $? -eq 2 ]; then
+        eval $(ssh-agent -a "$HOME/.ssh/agent.sock") >/dev/null
+    fi
     export CC=/usr/bin/clang
+    export ANTHROPIC_AUTH_TOKEN=$(cat ~/llm.api.key)
+    export GOPROXY=https://artifactory.g.devqa.gcp.dev.paypalinc.com/artifactory/go,direct
+    export GOPRIVATE=github.paypal.com
+
+    # Set Anthropic API endpoint
+    export ANTHROPIC_BASE_URL="https://aiplatform.dev51.cbf.dev.paypalinc.com/cosmosai/llm/v1"
+    export ANTHROPIC_API_URL="https://aiplatform.dev51.cbf.dev.paypalinc.com/cosmosai/llm/v1"
+    #export ANTHROPIC_MODEL=opus
+    #export ANTHROPIC_MODEL=claude-opus-4-6
+    #export ANTHROPIC_MODEL=claude-opus-4-5-20251101
+    export CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1
+    export ATLASSIAN_EMAIL="chlane@paypal.com"
+    export ATLASSIAN_API_TOKEN=$(cat ~/atlassian_token.txt)
+
+    # Set Atlassian MCP server configuration
+    export MCP_SERVER_ATLASSIAN_URL="https://mcp.atlassian.com/v1/sse"
 fi
 shopt -s histappend
 export HISTSIZE=200000

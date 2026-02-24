@@ -264,7 +264,7 @@ There are two things you can do about this warning:
   "Remove the association with KEY from LST. - by chatGPT"
   (delete (assoc key lst) lst))
 
-(require 'auctex)
+; (require 'auctex)
 ;(setq LaTeX-indent-environment-list (remove-entry "align*" LaTeX-indent-environment-list))
 
 (custom-set-faces
