@@ -2,6 +2,7 @@
 ### MANAGED BY RANCHER DESKTOP START (DO NOT EDIT)
 export PATH="/Users/chlane/.rd/bin:$PATH"
 ### MANAGED BY RANCHER DESKTOP END (DO NOT EDIT)
+ export PATH=$PATH:~/.local/share/coursier/bin
 
 # sourced in at shell startup time.
 # this file is part of the ppdev environment.
@@ -10,9 +11,15 @@ export PATH="/Users/chlane/.rd/bin:$PATH"
 export PY3=1
 
 export CLFAGS="-g -ggdb"
-export ORACLE_HOME=/Users/chlane/instantclient_11_2/
-export REQUESTS_CA_BUNDLE='/usr/local/etc/openssl/certs/combined_cacerts.pem'
-export SSL_CERT_FILE='/usr/local/etc/openssl/certs/combined_cacerts.pem'
+
+if [ "$(hostname -a)" == "laptop" ] ; then
+    export PATH=$PATH:~/.cargo/bin
+elif [ "$(uname)" == "Darwin" ] ; then   
+    export PATH=$PATH:~/bin:/Users/chlane/Library//Python/3.7/bin
+    export ORACLE_HOME=/Users/chlane/instantclient_11_2/
+    export REQUESTS_CA_BUNDLE='/usr/local/etc/openssl/certs/combined_cacerts.pem'
+    export SSL_CERT_FILE='/usr/local/etc/openssl/certs/combined_cacerts.pem'
+fi
 
 if [ "$INSIDE_EMACS" != "" ] ; then
     export EMACS=t
@@ -32,7 +39,6 @@ export PATH=/anaconda3/bin:$PATH
 export PATH=/usr/local/bin:$PATH
 export PATH=/usr/local/go/bin/:$PATH
 export PATH=~/google-cloud-sdk/bin:$PATH
-export PATH=$PATH:~/bin:/Users/chlane/Library//Python/3.7/bin
 export GOPATH=~/go
 
 export PATH=$PATH:$GOPATH/bin
@@ -68,26 +74,13 @@ if [[ $(uname) == "Darwin" ]] ; then
         eval $(ssh-agent -a "$HOME/.ssh/agent.sock") >/dev/null
     fi
     export CC=/usr/bin/clang
-    export ANTHROPIC_AUTH_TOKEN=$(cat ~/llm.api.key)
-    export GOPROXY=https://artifactory.g.devqa.gcp.dev.paypalinc.com/artifactory/go,direct
-    export GOPRIVATE=github.paypal.com
-
-    # Set Anthropic API endpoint
-    export ANTHROPIC_BASE_URL="https://aiplatform.dev51.cbf.dev.paypalinc.com/cosmosai/llm/v1"
-    export ANTHROPIC_API_URL="https://aiplatform.dev51.cbf.dev.paypalinc.com/cosmosai/llm/v1"
-    #export ANTHROPIC_MODEL=opus
-    #export ANTHROPIC_MODEL=claude-opus-4-6
-    #export ANTHROPIC_MODEL=claude-opus-4-5-20251101
-    export CLAUDE_CODE_DISABLE_EXPERIMENTAL_BETAS=1
-    export ATLASSIAN_EMAIL="chlane@paypal.com"
-    export ATLASSIAN_API_TOKEN=$(cat ~/atlassian_token.txt)
-
-    # Set Atlassian MCP server configuration
-    export MCP_SERVER_ATLASSIAN_URL="https://mcp.atlassian.com/v1/sse"
+else
+	echo Linux rocks
 fi
 shopt -s histappend
 export HISTSIZE=200000
-#export PROMPT_COMMAND="history -a; history -c; history -r;$PROMPT_COMMAND"
+export PROMPT_COMMAND=". ~/bin/prompt_cmd"
+export PROMPT_COMMAND="history -a; history -c; history -r;$PROMPT_COMMAND"
 export EDITOR=emacsclient
 HN=$(hostname)
 export HN
@@ -127,7 +120,6 @@ else
   PS1='\W($SHLVL:\!)\$ '
 fi
 PS2='> '
-export PROMPT_COMMAND=~/bin/prompt_cmd
 alias vi='vim -X'
 alias vim='vim -X'
 
