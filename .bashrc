@@ -82,8 +82,7 @@ export HISTSIZE=200000
 export PROMPT_COMMAND=". ~/bin/prompt_cmd"
 export PROMPT_COMMAND="history -a; history -c; history -r;$PROMPT_COMMAND"
 export EDITOR=emacsclient
-HN=$(hostname)
-export HN
+export HN=$(hostname)
 unset PYTHONHOME
 unset PYTHONPATH
 unset PYTHONBIN
@@ -105,18 +104,21 @@ fi
 # I had problems using 'eval tset' instead of 'TERM=', but you might want to 
 # try it anyway. I think with the right /etc/termcap it would work great.
 # eval `tset -sQ "$TERM"`
-if [ "$TERM" = "" ] ||  [ "$TERM" = "unknown" ]; then
- TERM=xterm
+if [ "$TERM" = "" -o "$TERM" = "unknown" ]; then
+ TERM=xterm-color
 fi
 export PAGER=/usr/bin/less
-
+ignoreeof=10
 # set up the color-ls environment variables:
 if [ "$EMACS" = "t" ] || [ "$INSIDE_EMACS" != "" ] ; then
+  alias ls='ls -larthdF --color --'
   export PAGER=/bin/cat
   export EMACS=t
   echo "Emacs rules."
   PS1='\W($SHLVL:\!)\$ '
 else 
+  eval `/usr/bin/dircolors -b`
+  alias ls='ls -F -lhartd --color -- '
   PS1='\W($SHLVL:\!)\$ '
 fi
 PS2='> '
@@ -127,7 +129,11 @@ alias su='su -'
 
 alias lock='loginctl lock-session'
 
-if [ "$TERM" = "linux" ]
+if [ -f /sw/bin/init.sh ]; then 
+    . /sw/bin/init.sh
+fi
+
+if [ $TERM = "linux" ]
 then
      unicode_start
 fi

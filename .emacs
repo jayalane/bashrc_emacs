@@ -156,6 +156,16 @@ There are two things you can do about this warning:
 (require 'flymake)
 (require 'flymake-golangci)
 (require 'flymake-python-pyflakes)
+(when (load "flymake" t)
+  (defun flymake-pyflakes-init ()
+    (let* ((temp-file (flymake-init-create-temp-buffer-copy
+                       'flymake-create-temp-inplace))
+           (local-file (file-relative-name
+                        temp-file
+                        (file-name-directory buffer-file-name))))
+      (list "/home/jayalane/bin/pycheckers.sh"  (list local-file)))))
+;;  (add-to-list 'flymake-allowed-file-name-masks
+;;               '("\\.py\\'" flymake-pyflakes-init)))
 
 
 ;; Added by Package.el.  This must come before configurations of
@@ -257,15 +267,28 @@ There are two things you can do about this warning:
       (path-separator . ":")
       (null-device . "/dev/null"))))
  '(package-selected-packages
-   '(transient claude-code protobuf-mode company-go company w3m disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru matlab-mode magit nov latex-preview-pane latex-math-preview latex-extra lean-mode flycheck-golangci-lint lsp-latex tree-sitter go-stacktracer go-complete go-autocomplete go-expr-completion go-gopath go-dlv ess sudoku slime memory-usage)))
+   '(transient claude-code protobuf-mode company-go company w3m disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru matlab-mode magit nov latex-preview-pane latex-math-preview latex-extra lean-mode flycheck-golangci-lint lsp-latex tree-sitter go-stacktracer go-complete go-autocomplete go-expr-completion go-gopath go-dlv ess sudoku slime memory-usage))
+   '(protobuf-mode company-go company w3m disk-usage lsp-mode google-maps
+                   markdown-mode gptel yaml flycheck-yamllint
+                   go-fill-struct go-direx go-errcheck go-stacktracer
+                   go-rename go-complete protobuf-mode ox-epub ess
+                   go-mode go-guru go-autocomplete go golint
+                   golden-ratio mines magit memory-usage go-guru
+                   matlab-mode magit nov latex-preview-pane
+                   latex-math-preview latex-extra lean-mode
+                   flycheck-golangci-lint lsp-latex tree-sitter
+                   go-stacktracer go-complete go-autocomplete
+                   go-expr-completion go-gopath go-dlv ess sudoku
+                   slime memory-usage)
+ '(send-mail-function 'mailclient-send-it))
 
 
 (defun remove-entry (key lst)
   "Remove the association with KEY from LST. - by chatGPT"
   (delete (assoc key lst) lst))
 
-; (require 'auctex)
-;(setq LaTeX-indent-environment-list (remove-entry "align*" LaTeX-indent-environment-list))
+(require 'auctex)
+;; (setq LaTeX-indent-environment-list (remove-entry "align*" LaTeX-indent-environment-list))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
