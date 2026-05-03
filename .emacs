@@ -23,12 +23,108 @@ There are two things you can do about this warning:
 
 (sleep-for 1)
 (package-initialize)
-;; (setq inferior-lisp-program "/usr/local/bin/sbcl")
+
+ ;; Install the grammar first (one-time)
+ ;;  (setq treesit-language-source-alist
+ ;;        '((scala "https://github.com/tree-sitter/tree-sitter-scala")))
+ ;; Then run: M-x treesit-install-language-grammar RET scala RET
+
+;; Use scala-ts-mode
+(use-package scala-ts-mode
+    :mode "\\.scala\\'"
+    :hook (scala-ts-mode . lsp-deferred))
+
+;; gnus / email
+
+;; Set your email identity
+(setq user-mail-address "chris@lane-jayasinha.com"
+        user-full-name "Chris Lane")
+
+;; Always generate a From header using user-full-name and user-mail-address
+(setq message-generate-headers-first '(From)
+      message-default-mail-headers (format "From: %s <%s>\n" user-full-name user-mail-address)
+      mail-host-address "lane-jayasinha.com")
+
+;; Also add From header for M-x mail (mail-mode)
+(setq mail-default-headers (format "From: %s <%s>\n" user-full-name user-mail-address))
+
+;; Use IMAP as primary mail source
+(setq gnus-select-method
+        '(nnimap "chris@lane-jayasinha.com"
+                 (nnimap-address "mail.lane-jayasinha.com")
+                 (nnimap-server-port 993)
+                 (gnus-search-engine gnus-search-imap)
+                 (nnimap-stream ssl)))
+
+(setq gnus-secondary-select-methods
+        '((nnimap "Jayalane"
+                  (nnimap-address "mail.disputingtaste.com")
+                  (nnimap-server-port 993)
+                  (gnus-search-engine gnus-search-imap)
+                  (nnimap-user "jayalane")
+                  (nnimap-stream ssl))
+          (nnimap "Clanstin"
+                  (nnimap-address "mail.disputingtaste.com")
+                  (nnimap-server-port 993)
+                  (gnus-search-engine gnus-search-imap)
+                  (nnimap-user "clanstin")
+                  (nnimap-stream ssl))))
+
+;; Enter groups with all articles visible at first
+(setq gnus-fetch-old-headers nil)
+
+;; Auto-expiry: articles marked 'E' get deleted after this many days
+;; Use 'immediate to delete right away, or a number for days to keep
+(setq nnmail-expiry-wait 'immediate)
+
+;; Treat 'd' (mark read) as expirable in mail groups
+(setq gnus-auto-expirable-newsgroups ".*")
+
+;; CRITICAL: Actually expunge deleted messages from IMAP server
+(setq nnimap-expunge 'on-exit)  ; Expunge when leaving group
+;; Alternatives: 'immediately (expunge right away) or 'never (manual only)
+
+;; For sending mail via SMTP (default: lane-jayasinha.com)
+(setq send-mail-function 'smtpmail-send-it
+      smtpmail-smtp-server "mail.lane-jayasinha.com"
+      smtpmail-smtp-service 587
+      smtpmail-stream-type 'starttls)
+
+;; Set From address based on which IMAP group we're in
+(setq gnus-posting-styles
+      '(("nnimap\\+chris@lane-jayasinha\\.com:.*"
+         (address "chris@lane-jayasinha.com"))
+        ("nnimap\\+chris@disputingtaste\\.com:.*"
+         (address "chris@disputingtaste.com"))))
+
+;; Switch SMTP server based on From address when sending
+(defun my-set-smtp-server ()
+  "Set SMTP server based on the From header."
+  (let ((from (message-fetch-field "From")))
+    (if (and from (string-match "disputingtaste\\.com" from))
+        (progn
+          (setq smtpmail-smtp-server "mail.disputingtaste.com"
+                smtpmail-smtp-service 587
+                smtpmail-stream-type 'starttls))
+      (setq smtpmail-smtp-server "mail.lane-jayasinha.com"
+            smtpmail-smtp-service 587
+            smtpmail-stream-type 'starttls))))
+
+(add-hook 'message-send-hook 'my-set-smtp-server)
+;; GPG encryption for authinfo
+(require 'epa-file)
+(epa-file-enable)  
+(setq auth-sources '("~/.authinfo.gpg"))
+
+;; sbcl
 (setq slime-lisp-implementations
       '((sbcl ("/usr/local/bin/sbcl" "--control-stack-size 1000") :coding-system utf-8-unix)))
 (setq slime-contribs '(slime-fancy))
 (cond ((or (boundp 'window-system) (window-system)) (message "window system"))
       t (message "No window system"))
+
+(require 'scala-repl)
+
 
 (setq initial-major-mode 'emacs-lisp-mode)
 (setq-default tab-width 4) ; emacs 23.1 to 26 default to 8
@@ -53,6 +149,17 @@ There are two things you can do about this warning:
 (add-hook 'comint-output-filter-functions
           'comint-truncate-buffer)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+
+;; make ansi term declare xterm-color - getting weird artifacts with eterm-color
+(setq term-term-name "xterm-color")
+
+(setq auto-save-default t)
+(setq auto_save-interval 5)
+(setq auto_save-timeout 5)
+(setq mail-from-style 'system-default)
+(setq scroll-step 1)
+(setq comint-input-ring-size 10000000)
+(setq comint-buffer-maximum-size 500000)
 
 (setq mastodon-active-user "jayalane")
 (setq mastodon-instance-url "https://mastodon.online")
@@ -94,14 +201,51 @@ There are two things you can do about this warning:
 (require 'go-mode)
 (add-hook 'before-save-hook 'gofmt-before-save)
 
-(if (display-graphic-p)
-    (progn
-      (setq default-frame-alist
-	    '(
-	      (background-color . "black")
-	      (cursor-color . "purple")
-	      (foreground-color . "green"))
-		)))
+;; Set frame colors - works for both regular Emacs and daemon/emacsclient
+(setq default-frame-alist
+      '((background-color . "black")
+        (cursor-color . "purple")
+        (foreground-color . "green")
+        (top . 50)
+        (left . 300)
+        (width . (text-pixels . 1200))
+        (height . (text-pixels . 800))))
+
+;; Settings for the initial frame
+(setq initial-frame-alist
+      '((background-color . "black")
+        (cursor-color . "purple")
+        (foreground-color . "green")
+        (top . 50)
+        (left . 300)
+        (width . (text-pixels . 1200))
+        (height . (text-pixels . 800))))
+
+;; Also apply to frames created after init (for daemon mode)
+;; Track frame count for diagonal cascading position
+(defvar my-frame-counter 0
+  "Counter for cascading frame positions along diagonal.")
+
+(defun my-frame-setup (frame)
+  "Apply color and geometry settings to new frames (for emacsclient).
+Positions frames along a diagonal from (200,20) down-left in steps of 20px."
+  (when (display-graphic-p frame)
+    ;; Calculate diagonal position (wraps after 10 frames)
+    (let* ((step (* (mod my-frame-counter 10) 20))
+           (left (- 200 step))
+           (top (+ 20 step)))  ; Start at 20 to clear menu bar
+      ;; Set all frame parameters at once
+      (modify-frame-parameters frame
+                               `((background-color . "black")
+                                 (foreground-color . "green")
+                                 (cursor-color . "purple")
+                                 (left . ,left)
+                                 (top . ,top)
+                                 (width . (text-pixels . 1200))
+                                 (height . (text-pixels . 800)))))
+    (setq my-frame-counter (1+ my-frame-counter))))
+
+(add-hook 'after-make-frame-functions #'my-frame-setup)
 
 (require 'sudoku)
 (require 'url)
@@ -289,6 +433,10 @@ There are two things you can do about this warning:
 ;;                 sudoku transient tree-sitter vterm w3m yaml)))
 ;; '(package-vc-selected-packages
 ;;  '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs"))))
+;;  need system to merge these better - alpha and 1 per line I guess
+;;   '(protobuf-ts-mode rust-mode jq-ts-mode jq-mode mastodon vterm flycheck lsp-metals sbt-mode scala-repl scala-ts-mode minesweeper transient claude-code protobuf-mode company-go company w3m disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru matlab-mode magit nov latex-preview-pane latex-math-preview latex-extra lean-mode flycheck-golangci-lint lsp-latex tree-sitter go-stacktracer go-complete go-autocomplete go-expr-completion go-gopath go-dlv ess sudoku slime memory-usage))
+
+;; '(send-mail-function 'sendmail-send-it))
 
 
 (defun remove-entry (key lst)
@@ -297,6 +445,8 @@ There are two things you can do about this warning:
 
 (require 'auctex)
 ;; (setq LaTeX-indent-environment-list (remove-entry "align*" LaTeX-indent-environment-list))
+
+(require 'disk-usage)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -341,11 +491,11 @@ apps are not started from a shell."
 
 ;; (setenv "namespace" "test")
 ;; (setenv "namespace" "local")
-(setenv "AZ" "ccg01")
+(setenv "SUDO_PROMPT" "[sudo] password for %u: ")
 (setenv "GODEBUG" "x509sha1=1")
 (defun comint-password-function-impl (a)
   "interact password"
-  "bad-password")
+  "bad-password") ;; set this to the desired password (simple simple function)
 
 (setq comint-password-function 'comint-password-function-impl)
 
@@ -364,6 +514,7 @@ apps are not started from a shell."
     comint-mode-hook
     shell-mode-hook
     eshell-mode-hook
+    vterm-mode-hook
     go-mode-hook))
 
 ;; Enable visual-line-mode and line numbers for specific modes
