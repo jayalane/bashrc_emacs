@@ -187,87 +187,92 @@ There are two things you can do about this warning:
  '(compile-command
    "cd ~/go/src/github.paypal.com/chlane/rlcountserv/ ; namespace=test make")
  '(connection-local-criteria-alist
-   '(((:application tramp :protocol "flatpak")
+   '(((:application vc-git) vc-git-connection-default-profile)
+     ((:application tramp :protocol "flatpak")
       tramp-container-connection-local-default-flatpak-profile)
      ((:application tramp)
-      tramp-connection-local-default-system-profile tramp-connection-local-default-shell-profile)))
+      tramp-connection-local-default-system-profile
+      tramp-connection-local-default-shell-profile)))
  '(connection-local-profile-alist
-   '((tramp-container-connection-local-default-flatpak-profile
-      (tramp-remote-path "/app/bin" tramp-default-remote-path "/bin" "/usr/bin" "/sbin" "/usr/sbin" "/usr/local/bin" "/usr/local/sbin" "/local/bin" "/local/freeware/bin" "/local/gnu/bin" "/usr/freeware/bin" "/usr/pkg/bin" "/usr/contrib/bin" "/opt/bin" "/opt/sbin" "/opt/local/bin"))
+   '((vc-git-connection-default-profile (vc-git--program-version))
+     (tramp-container-connection-local-default-flatpak-profile
+      (tramp-remote-path "/app/bin" tramp-default-remote-path "/bin"
+                         "/usr/bin" "/sbin" "/usr/sbin"
+                         "/usr/local/bin" "/usr/local/sbin"
+                         "/local/bin" "/local/freeware/bin"
+                         "/local/gnu/bin" "/usr/freeware/bin"
+                         "/usr/pkg/bin" "/usr/contrib/bin" "/opt/bin"
+                         "/opt/sbin" "/opt/local/bin"))
      (tramp-connection-local-darwin-ps-profile
-      (tramp-process-attributes-ps-args "-acxww" "-o" "pid,uid,user,gid,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "state=abcde" "-o" "ppid,pgid,sess,tty,tpgid,minflt,majflt,time,pri,nice,vsz,rss,etime,pcpu,pmem,args")
-      (tramp-process-attributes-ps-format
-       (pid . number)
-       (euid . number)
-       (user . string)
-       (egid . number)
-       (comm . 52)
-       (state . 5)
-       (ppid . number)
-       (pgrp . number)
-       (sess . number)
-       (ttname . string)
-       (tpgid . number)
-       (minflt . number)
-       (majflt . number)
-       (time . tramp-ps-time)
-       (pri . number)
-       (nice . number)
-       (vsize . number)
-       (rss . number)
-       (etime . tramp-ps-time)
-       (pcpu . number)
-       (pmem . number)
-       (args)))
+      (tramp-process-attributes-ps-args "-acxww" "-o"
+                                        "pid,uid,user,gid,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                        "-o" "state=abcde" "-o"
+                                        "ppid,pgid,sess,tty,tpgid,minflt,majflt,time,pri,nice,vsz,rss,etime,pcpu,pmem,args")
+      (tramp-process-attributes-ps-format (pid . number)
+                                          (euid . number)
+                                          (user . string)
+                                          (egid . number) (comm . 52)
+                                          (state . 5) (ppid . number)
+                                          (pgrp . number)
+                                          (sess . number)
+                                          (ttname . string)
+                                          (tpgid . number)
+                                          (minflt . number)
+                                          (majflt . number)
+                                          (time . tramp-ps-time)
+                                          (pri . number)
+                                          (nice . number)
+                                          (vsize . number)
+                                          (rss . number)
+                                          (etime . tramp-ps-time)
+                                          (pcpu . number)
+                                          (pmem . number) (args)))
      (tramp-connection-local-busybox-ps-profile
-      (tramp-process-attributes-ps-args "-o" "pid,user,group,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "stat=abcde" "-o" "ppid,pgid,tty,time,nice,etime,args")
-      (tramp-process-attributes-ps-format
-       (pid . number)
-       (user . string)
-       (group . string)
-       (comm . 52)
-       (state . 5)
-       (ppid . number)
-       (pgrp . number)
-       (ttname . string)
-       (time . tramp-ps-time)
-       (nice . number)
-       (etime . tramp-ps-time)
-       (args)))
+      (tramp-process-attributes-ps-args "-o"
+                                        "pid,user,group,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                        "-o" "stat=abcde" "-o"
+                                        "ppid,pgid,tty,time,nice,etime,args")
+      (tramp-process-attributes-ps-format (pid . number)
+                                          (user . string)
+                                          (group . string) (comm . 52)
+                                          (state . 5) (ppid . number)
+                                          (pgrp . number)
+                                          (ttname . string)
+                                          (time . tramp-ps-time)
+                                          (nice . number)
+                                          (etime . tramp-ps-time)
+                                          (args)))
      (tramp-connection-local-bsd-ps-profile
-      (tramp-process-attributes-ps-args "-acxww" "-o" "pid,euid,user,egid,egroup,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "-o" "state,ppid,pgid,sid,tty,tpgid,minflt,majflt,time,pri,nice,vsz,rss,etimes,pcpu,pmem,args")
-      (tramp-process-attributes-ps-format
-       (pid . number)
-       (euid . number)
-       (user . string)
-       (egid . number)
-       (group . string)
-       (comm . 52)
-       (state . string)
-       (ppid . number)
-       (pgrp . number)
-       (sess . number)
-       (ttname . string)
-       (tpgid . number)
-       (minflt . number)
-       (majflt . number)
-       (time . tramp-ps-time)
-       (pri . number)
-       (nice . number)
-       (vsize . number)
-       (rss . number)
-       (etime . number)
-       (pcpu . number)
-       (pmem . number)
-       (args)))
+      (tramp-process-attributes-ps-args "-acxww" "-o"
+                                        "pid,euid,user,egid,egroup,comm=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                        "-o"
+                                        "state,ppid,pgid,sid,tty,tpgid,minflt,majflt,time,pri,nice,vsz,rss,etimes,pcpu,pmem,args")
+      (tramp-process-attributes-ps-format (pid . number)
+                                          (euid . number)
+                                          (user . string)
+                                          (egid . number)
+                                          (group . string) (comm . 52)
+                                          (state . string)
+                                          (ppid . number)
+                                          (pgrp . number)
+                                          (sess . number)
+                                          (ttname . string)
+                                          (tpgid . number)
+                                          (minflt . number)
+                                          (majflt . number)
+                                          (time . tramp-ps-time)
+                                          (pri . number)
+                                          (nice . number)
+                                          (vsize . number)
+                                          (rss . number)
+                                          (etime . number)
+                                          (pcpu . number)
+                                          (pmem . number) (args)))
      (tramp-connection-local-default-shell-profile
-      (shell-file-name . "/bin/sh")
-      (shell-command-switch . "-c"))
+      (shell-file-name . "/bin/sh") (shell-command-switch . "-c"))
      (tramp-connection-local-default-system-profile
-      (path-separator . ":")
-      (null-device . "/dev/null"))))
+      (path-separator . ":") (null-device . "/dev/null"))))
  '(package-selected-packages
-   '(transient claude-code protobuf-mode company-go company w3m disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru matlab-mode magit nov latex-preview-pane latex-math-preview latex-extra lean-mode flycheck-golangci-lint lsp-latex tree-sitter go-stacktracer go-complete go-autocomplete go-expr-completion go-gopath go-dlv ess sudoku slime memory-usage))
    '(protobuf-mode company-go company w3m disk-usage lsp-mode google-maps
                    markdown-mode gptel yaml flycheck-yamllint
                    go-fill-struct go-direx go-errcheck go-stacktracer
@@ -281,6 +286,18 @@ There are two things you can do about this warning:
                    go-expr-completion go-gopath go-dlv ess sudoku
                    slime memory-usage)
  '(send-mail-function 'mailclient-send-it))
+;;   '(claude-code company company-go disk-usage ess ess
+;;                 flycheck-golangci-lint flycheck-yamllint go
+;;                 go-autocomplete go-autocomplete go-complete
+;;                 go-complete go-direx go-dlv go-errcheck
+;;                 go-expr-completion go-fill-struct go-gopath go-guru
+;;                 go-guru go-mode go-rename go-stacktracer
+;;                 go-stacktracer golden-ratio golint google-maps gptel
+;;                 latex-extra latex-math-preview latex-preview-pane
+;;                 lean-mode lsp-latex lsp-mode magit magit
+;;                 markdown-mode matlab-mode memory-usage memory-usage
+;;                 mines nov ox-epub protobuf-mode protobuf-mode slime
+;;                 sudoku transient tree-sitter vterm w3m yaml)))
 
 
 (defun remove-entry (key lst)

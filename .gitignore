@@ -1,0 +1,14 @@
+*.elc
+*.eln
+
+.emacs.d/auto-save-list/
+.emacs.d/backup/
+.emacs.d/elpa/gnupg/tofu.db
+.emacs.d/tramp
+.emacs.d/elpa/archives/melpa/archive-contents
+.emacs.d/elpa/archives/nongnu/archive-contents.signed
+.emacs.d/elpa/archives/gnu/archive-contents.signed
+.emacs.d/backup/
+
+
+

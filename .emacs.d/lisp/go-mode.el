@@ -1,1 +1,0 @@
-../golang/go-mode.el
