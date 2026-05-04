@@ -284,7 +284,7 @@ There are two things you can do about this warning:
                    flycheck-golangci-lint lsp-latex tree-sitter
                    go-stacktracer go-complete go-autocomplete
                    go-expr-completion go-gopath go-dlv ess sudoku
-                   slime memory-usage)
+                   slime memory-usage))
  '(send-mail-function 'mailclient-send-it))
 ;;   '(claude-code company company-go disk-usage ess ess
 ;;                 flycheck-golangci-lint flycheck-yamllint go
