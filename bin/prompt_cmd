@@ -1,5 +1,5 @@
 #! /bin/bash
-
+history -a; history -c; history -r
 echo `date`
 pwd
 if [ "$EMACS" != "t" ]; then

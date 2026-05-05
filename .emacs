@@ -35,6 +35,7 @@ There are two things you can do about this warning:
 (setf dired-kill-when-opening-new-dired-buffer t)
 
 (push "~/.emacs.d/lisp" load-path)
+(push "~/.emacs.d/s3ed" load-path)
 (setq vc-make-backup-files t)
 (setq version-control t)
 (add-to-list 'backup-directory-alist '("." . ".~"))
@@ -53,20 +54,8 @@ There are two things you can do about this warning:
           'comint-truncate-buffer)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
-(setq auto-save-default t)
-(setq auto_save-interval 5)
-(setq auto_save-timeout 5)
-(setq mail-from-style 'system-default)
-(setq scroll-step 1)
-(setq comint-input-ring-size 10000000)
-(setq comint-buffer-maximum-size 500000)
-
 (setq mastodon-active-user "jayalane")
 (setq mastodon-instance-url "https://mastodon.online")
-
-(add-hook 'comint-output-filter-functions
-          'comint-truncate-buffer)
-(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
 
 (require 'server)
 
@@ -99,7 +88,7 @@ There are two things you can do about this warning:
   version-control t      ; Use version numbers on backups
   delete-old-versions t  ; Automatically delete excess backups
   kept-new-versions 20   ; how many of the newest versions to keep
-  kept-old-versions 5    ; and how many of the old
+  kept-old-versions 10    ; and how many of the old
   )
 
 (require 'go-mode)
@@ -298,6 +287,8 @@ There are two things you can do about this warning:
 ;;                 markdown-mode matlab-mode memory-usage memory-usage
 ;;                 mines nov ox-epub protobuf-mode protobuf-mode slime
 ;;                 sudoku transient tree-sitter vterm w3m yaml)))
+;; '(package-vc-selected-packages
+;;  '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs"))))
 
 
 (defun remove-entry (key lst)
@@ -434,6 +425,60 @@ apps are not started from a shell."
 
 
 (setq lsp-go-use-gofumpt t)
+
+(require 'pgmacs)
+(require 'dash)
+(require 's3ed)
+
+(defun s3ed-load-aws-creds (&optional profile)
+  "Load AWS credentials by running get_creds.sh.
+PROFILE defaults to \"prod-ro\"."
+  (interactive "sAWS profile (default prod-ro): ")
+  (when (or (null profile) (string-empty-p profile))
+    (setq profile "prod-ro"))
+  (let ((output (shell-command-to-string
+                 (format ". ~/bin/get_creds.sh %s ; set | grep ^AWS_"
+                         (shell-quote-argument profile)))))
+    (dolist (line (split-string output "\n" t))
+      (when (string-match "^\\(AWS_[^=]+\\)=\\(.*\\)$" line)
+        (setenv (match-string 1 line) (match-string 2 line))))
+    (message "AWS credentials loaded for %s" profile)))
+
+;;; Set search_path for pgmacs/pg.el connections
+(add-to-list 'pg-new-connection-hook
+             (lambda (con)
+               (pg-exec con "SET search_path TO etl_control, common, reporting, client_fcc, client_twh;")))
+
+;;; Redshift: pg-tables legacy path doesn't work; override to use information_schema
+(defun my-pg-tables-redshift (orig-fun con)
+  "Use information_schema.tables for Redshift, which reports as PostgreSQL 8.x."
+  (let* ((res (pg-exec con
+               "SELECT DISTINCT table_schema, table_name FROM information_schema.tables
+                WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
+                AND table_type IN ('BASE TABLE', 'VIEW')"))
+         (tuples (pg-result res :tuples)))
+    (cl-loop for tuple in tuples
+             collect (let ((schema (cl-first tuple))
+                           (name (cl-second tuple)))
+                       (make-pg-qualified-name :schema schema :name name)))))
+
+(advice-add 'pg-tables :around #'my-pg-tables-redshift)
+
+;;; Redshift connection
+(setq sql-connection-alist
+      '((redshift
+         (sql-product 'postgres)
+         (sql-server "localhost")
+         (sql-port 5439)
+         (sql-database "level")
+         (sql-user "dbt"))))
+
+(defun my-sql-redshift-hook ()
+  "Set search_path after connecting to Redshift."
+  (when (eq sql-product 'postgres)
+    (sql-send-string "SET search_path TO etl_control, common, reporting, client_fcc, client_twh;")))
+
+(add-hook 'sql-login-hook #'my-sql-redshift-hook)
 
 ;;; .emacs ends here
 
