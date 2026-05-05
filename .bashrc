@@ -59,8 +59,6 @@ if [[ $(uname) == "Darwin" ]] ; then
         eval $(ssh-agent -a "$HOME/.ssh/agent.sock") &>/dev/null
     fi
     export CC=/usr/bin/clang
-else
-	echo Linux rocks
 fi
 shopt -s histappend
 export HISTSIZE=200000
