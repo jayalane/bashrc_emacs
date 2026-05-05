@@ -419,6 +419,7 @@ Positions frames along a diagonal from (200,20) down-left in steps of 20px."
                    go-expr-completion go-gopath go-dlv ess sudoku
                    slime memory-usage))
  '(send-mail-function 'mailclient-send-it))
+   ;;'(transient claude-code protobuf-mode company-go company disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru matlab-mode magit nov latex-preview-pane latex-math-preview latex-extra lean-mode flycheck-golangci-lint lsp-latex tree-sitter go-stacktracer go-complete go-autocomplete go-expr-completion go-gopath go-dlv ess sudoku slime memory-usage)) 
 ;;   '(claude-code company company-go disk-usage ess ess
 ;;                 flycheck-golangci-lint flycheck-yamllint go
 ;;                 go-autocomplete go-autocomplete go-complete
@@ -434,7 +435,7 @@ Positions frames along a diagonal from (200,20) down-left in steps of 20px."
 ;; '(package-vc-selected-packages
 ;;  '((pgmacs :vc-backend Git :url "https://github.com/emarsden/pgmacs"))))
 ;;  need system to merge these better - alpha and 1 per line I guess
-;;   '(protobuf-ts-mode rust-mode jq-ts-mode jq-mode mastodon vterm flycheck lsp-metals sbt-mode scala-repl scala-ts-mode minesweeper transient claude-code protobuf-mode company-go company w3m disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru matlab-mode magit nov latex-preview-pane latex-math-preview latex-extra lean-mode flycheck-golangci-lint lsp-latex tree-sitter go-stacktracer go-complete go-autocomplete go-expr-completion go-gopath go-dlv ess sudoku slime memory-usage))
+;;   '(protobuf-ts-mode w3m rust-mode jq-ts-mode jq-mode mastodon vterm flycheck lsp-metals sbt-mode scala-repl scala-ts-mode minesweeper transient claude-code protobuf-mode company-go company w3m disk-usage lsp-mode google-maps markdown-mode gptel yaml flycheck-yamllint go-fill-struct go-direx go-errcheck go-stacktracer go-rename go-complete protobuf-mode ox-epub ess go-mode go-guru go-autocomplete go golint golden-ratio mines magit memory-usage go-guru matlab-mode magit nov latex-preview-pane latex-math-preview latex-extra lean-mode flycheck-golangci-lint lsp-latex tree-sitter go-stacktracer go-complete go-autocomplete go-expr-completion go-gopath go-dlv ess sudoku slime memory-usage))
 
 ;; '(send-mail-function 'sendmail-send-it))
 

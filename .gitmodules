@@ -1,6 +1,3 @@
-[submodule ".emacs.d/golang"]
-	path = .emacs.d/golang
-	url = https://github.com/dominikh/go-mode.el.git
 [submodule ".emacs.d/s3ed"]
 	path = .emacs.d/s3ed
 	url = https://github.com/jayalane/s3ed
