@@ -12,7 +12,10 @@
 .emacs.d/elpa/archives/gnu/archive-contents.signed
 .emacs.d/backup/
 .emacs.d/url
-
+.emacs.d/transient
+.emacs.d/network-security.data
+.emacs.d/mastodon.plstore
+ 
 .emacs.d/elpa/archives/gnu/archive-contents
 .emacs.d/elpa/archives/nongnu/archive-contents
 
