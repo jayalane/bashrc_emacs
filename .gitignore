@@ -1,6 +1,9 @@
 *.elc
+.~
 *.eln
 *.so
+.DS_Store
+.emacs.d/projects.eld
 .emacs.d/elpa/vterm*/build/*
 .emacs.d/auto-save-list/
 .emacs.d/backup/
