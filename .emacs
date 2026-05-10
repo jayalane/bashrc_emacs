@@ -491,9 +491,9 @@ apps are not started from a shell."
 ;(add-hook 'news-reply-mode-hook 'mc-install-write-mode)
 (set-exec-path-from-shell-PATH)
 
-;; (setenv "namespace" "test")
-;; (setenv "namespace" "local")
 (setenv "SUDO_PROMPT" "[sudo] password for %u: ")
+(setenv  "DYLD_LIBRARY_PATH" "/Users/jayalane/homebrew/Cellar/libgccjit/15.2.0/lib/gcc/current/:$DYLD_LIBRARY_PATH")
+
 (setenv "GODEBUG" "x509sha1=1")
 (defun comint-password-function-impl (a)
   "interact password"
