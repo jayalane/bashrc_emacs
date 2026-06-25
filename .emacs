@@ -61,14 +61,9 @@ There are two things you can do about this warning:
                   (nnimap-address "mail.disputingtaste.com")
                   (nnimap-server-port 993)
                   (gnus-search-engine gnus-search-imap)
-                  (nnimap-user "jayalane")
-                  (nnimap-stream ssl))
-          (nnimap "Clanstin"
-                  (nnimap-address "mail.disputingtaste.com")
-                  (nnimap-server-port 993)
-                  (gnus-search-engine gnus-search-imap)
-                  (nnimap-user "clanstin")
+                  (nnimap-user "mailchecker")
                   (nnimap-stream ssl))))
+
 
 ;; Enter groups with all articles visible at first
 (setq gnus-fetch-old-headers nil)
