@@ -39,6 +39,16 @@ This function is deprecated. Use `claude-code-send-ctrl-o' instead." t)
 "Send Ctrl+T to Claude Code buffer." t)
 (autoload 'claude-code-send-tab "claude-code-commands"
 "Send Tab to Claude Code buffer." t)
+(autoload 'claude-code-send-page-up "claude-code-commands"
+"Send Page Up key to Claude Code buffer for scrolling in fullscreen mode." t)
+(autoload 'claude-code-send-page-down "claude-code-commands"
+"Send Page Down key to Claude Code buffer for scrolling in fullscreen mode." t)
+(autoload 'claude-code-send-line-up "claude-code-commands"
+"Send Shift+Up to scroll up one line in Claude Code fullscreen mode." t)
+(autoload 'claude-code-send-line-down "claude-code-commands"
+"Send Shift+Down to scroll down one line in Claude Code fullscreen mode." t)
+(autoload 'claude-code-send-ctrl-end "claude-code-commands"
+"Send Ctrl+End to jump to the bottom in Claude Code fullscreen mode." t)
 (autoload 'claude-code-fix-diagnostic "claude-code-commands"
 "Select a diagnostic from `lsp-diagnostics' and send a fix prompt to Claude Code." t)
 (register-definition-prefixes "claude-code-commands" '("claude-code-"))
@@ -101,6 +111,32 @@ If region is selected, append line number range (e.g., @file.el#L10-15)." t)
 
 ;;; Generated autoloads from claude-code-ui.el
 
+(autoload 'claude-code-vterm-scroll-mode "claude-code-ui"
+"Minor mode for scrolling Claude Code fullscreen output.
+
+When enabled in a `claude-code-vterm-mode' buffer, this mode binds keys
+for scrolling the Claude Code fullscreen view
+(see https://code.claude.com/docs/en/fullscreen).
+
+Keybindings:
+\\{claude-code-vterm-scroll-mode-map}
+
+This is a minor mode.  If called interactively, toggle the
+`Claude-Code-Vterm-Scroll mode' mode.  If the prefix argument is
+positive, enable the mode, and if it is zero or negative, disable the
+mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate the variable `claude-code-vterm-scroll-mode'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t)
 (autoload 'claude-code-prompt-mode "claude-code-ui"
 "Major mode for editing Claude Code prompt files.
 \\{claude-code-prompt-mode-map}

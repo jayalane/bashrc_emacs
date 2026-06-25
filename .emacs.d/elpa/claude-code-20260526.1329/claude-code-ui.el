@@ -33,6 +33,8 @@
 (require 'markdown-mode)
 
 (declare-function vterm-mode "vterm" ())
+(declare-function face-remap-remove-relative "face-remap" (cookie))
+(defvar vterm-copy-mode)
 
 ;; Forward declarations
 (declare-function claude-code-run "claude-code-core" ())
@@ -58,9 +60,15 @@
 (declare-function claude-code-send-shift-tab "claude-code-commands" ())
 (declare-function claude-code-send-ctrl-t "claude-code-commands" ())
 (declare-function claude-code-send-tab "claude-code-commands" ())
+(declare-function claude-code-send-page-up "claude-code-commands" ())
+(declare-function claude-code-send-page-down "claude-code-commands" ())
+(declare-function claude-code-send-line-up "claude-code-commands" ())
+(declare-function claude-code-send-line-down "claude-code-commands" ())
+(declare-function claude-code-send-ctrl-end "claude-code-commands" ())
 (declare-function claude-code-init "claude-code-commands" ())
 (declare-function claude-code-clear "claude-code-commands" ())
 (declare-function claude-code-help "claude-code-commands" ())
+(declare-function claude-code-plan "claude-code-commands" ())
 (declare-function claude-code-execute-custom-command "claude-code-commands" ())
 (declare-function claude-code-memory "claude-code-commands" ())
 (declare-function claude-code-config "claude-code-commands" ())
@@ -129,6 +137,7 @@ Minimum value is 0.001 seconds to ensure proper operation."
     (define-key map (kbd "C-c RET") 'claude-code-send-return)
     (define-key map (kbd "C-c TAB") 'claude-code-send-shift-tab)
     (define-key map (kbd "C-c C-t") 'claude-code-transient)
+    (define-key map (kbd "C-c C-s") 'claude-code-vterm-scroll-mode) ; s for scroll
     map)
   "Keymap for `claude-code-vterm-mode'.")
 
@@ -218,6 +227,14 @@ INPUT is the terminal output string."
   (hl-line-mode -1)
   (display-line-numbers-mode -1)
   (face-remap-add-relative 'nobreak-space '(:underline nil))
+  ;; Restore Emacs' built-in cursor in `vterm-copy-mode'.  We disable
+  ;; `cursor-type' above to reduce flicker since vterm draws its own
+  ;; cursor, but vterm stops drawing it in copy-mode -- without this
+  ;; hook, the cursor would be invisible while copying text.
+  (add-hook 'vterm-copy-mode-hook
+            (lambda ()
+              (setq-local cursor-type (when vterm-copy-mode t)))
+            nil t)
   ;; Clean up timer on buffer kill
   (add-hook 'kill-buffer-hook #'claude-code--vterm-cleanup-multiline-timer nil t)
 
@@ -232,6 +249,101 @@ INPUT is the terminal output string."
           (message "Error in Claude Code vterm filter: %s" err)
           ;; Pass through the input even if there's an error to avoid breaking the terminal
           (funcall orig-fun process input)))))))
+
+;;;; Scroll minor mode (for Claude Code fullscreen mode)
+
+(defface claude-code-vterm-scroll-mode-lighter-face
+  '((((class color) (background dark))
+     :background "DarkOrange3" :foreground "white" :weight bold)
+    (((class color) (background light))
+     :background "DarkOrange" :foreground "black" :weight bold)
+    (t :inverse-video t :weight bold))
+  "Face for the lighter shown in the mode line while scroll mode is active."
+  :group 'claude-code-ui)
+
+(defface claude-code-vterm-scroll-mode-line-face
+  '((((class color) (background dark))
+     :background "DarkOrange3" :foreground "white" :weight bold)
+    (((class color) (background light))
+     :background "DarkOrange" :foreground "black" :weight bold)
+    (t :inverse-video t :weight bold))
+  "Face used to remap the mode line while scroll mode is active.
+
+When `claude-code-vterm-scroll-mode-highlight-modeline' is non-nil
+the entire mode line of the Claude Code buffer takes on this face
+while the mode is active."
+  :group 'claude-code-ui)
+
+(defcustom claude-code-vterm-scroll-mode-highlight-modeline t
+  "Whether to remap the mode line face while scroll mode is active.
+
+When non-nil, the entire mode line of the Claude Code buffer is
+highlighted using `claude-code-vterm-scroll-mode-line-face' so the
+active scroll mode is visually obvious."
+  :type 'boolean
+  :group 'claude-code-ui)
+
+(defvar-local claude-code--vterm-scroll-mode-face-cookie nil
+  "Cookie returned by `face-remap-add-relative' for the mode line.
+
+Used to undo the mode-line face remap when scroll mode is disabled.")
+
+(defvar claude-code-vterm-scroll-mode-lighter
+  (propertize " 📜SCROLL "
+              'face 'claude-code-vterm-scroll-mode-lighter-face)
+  "Lighter shown in the mode line while scroll mode is active.
+
+A propertized string with `claude-code-vterm-scroll-mode-lighter-face'
+so the lighter is visually prominent.")
+
+(defvar claude-code-vterm-scroll-mode-map
+  (let ((map (make-sparse-keymap)))
+    ;; Page scroll
+    (define-key map (kbd "<prior>") 'claude-code-send-page-up)
+    (define-key map (kbd "<next>") 'claude-code-send-page-down)
+    ;; Line scroll (Shift+arrow)
+    (define-key map (kbd "S-<up>") 'claude-code-send-line-up)
+    (define-key map (kbd "S-<down>") 'claude-code-send-line-down)
+    ;; Jump to bottom
+    (define-key map (kbd "C-<end>") 'claude-code-send-ctrl-end)
+    ;; Toggle back to normal vterm input mode
+    (define-key map (kbd "C-c C-s") 'claude-code-vterm-scroll-mode)
+    (define-key map (kbd "q") 'claude-code-vterm-scroll-mode)
+    map)
+  "Keymap for `claude-code-vterm-scroll-mode'.")
+
+;;;###autoload
+(define-minor-mode claude-code-vterm-scroll-mode
+  "Minor mode for scrolling Claude Code fullscreen output.
+
+When enabled in a `claude-code-vterm-mode' buffer, this mode binds keys
+for scrolling the Claude Code fullscreen view
+\(see https://code.claude.com/docs/en/fullscreen\).
+
+Keybindings:
+\\{claude-code-vterm-scroll-mode-map}"
+  :init-value nil
+  :lighter claude-code-vterm-scroll-mode-lighter
+  :keymap claude-code-vterm-scroll-mode-map
+  (cond
+   ;; Refuse to enable outside vterm buffers
+   ((and claude-code-vterm-scroll-mode
+         (not (derived-mode-p 'vterm-mode)))
+    (claude-code-vterm-scroll-mode -1)
+    (user-error "claude-code-vterm-scroll-mode is only available in vterm buffers"))
+   ;; Enabling: remap the mode-line face for prominent visual feedback
+   (claude-code-vterm-scroll-mode
+    (when claude-code-vterm-scroll-mode-highlight-modeline
+      (setq claude-code--vterm-scroll-mode-face-cookie
+            (face-remap-add-relative 'mode-line
+                                     'claude-code-vterm-scroll-mode-line-face)))
+    (force-mode-line-update))
+   ;; Disabling: undo the mode-line face remap
+   (t
+    (when claude-code--vterm-scroll-mode-face-cookie
+      (face-remap-remove-relative claude-code--vterm-scroll-mode-face-cookie)
+      (setq claude-code--vterm-scroll-mode-face-cookie nil))
+    (force-mode-line-update))))
 
 (defvar claude-code-prompt-mode-map
   (let ((map (make-sparse-keymap)))
@@ -325,7 +437,8 @@ INPUT is the terminal output string."
    ["Project & Session"
     ("i" "Init project (/init)" claude-code-init)
     ("k" "Clear conversation (/clear)" claude-code-clear)
-    ("h" "Help (/help)" claude-code-help)]
+    ("h" "Help (/help)" claude-code-help)
+    ("p" "Plan (/plan)" claude-code-plan)]
    ["Memory & Config"
     ("m" "Memory (/memory)" claude-code-memory)
     ("c" "Config (/config)" claude-code-config)
