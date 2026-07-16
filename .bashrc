@@ -15,7 +15,7 @@ export PATH=/usr/local/bin:$PATH
 export PATH=/usr/local/go/bin/:$PATH
 export PATH=~/google-cloud-sdk/bin:$PATH
 export PATH=$PATH:~/Library/Python/3.14/bin/
-export PATH=$PATH:~/bin:~/Library//Python/3.7/bin
+export PATH="~/homebrew/opt/openjdk/bin:$PATH"
 
 export GOPATH=~/go
 
@@ -44,6 +44,9 @@ export PATH="/x/opt/pp/bin:$PATH:~/bin:/usr/local/bin:."
 
 export TZ=Asia/Calcutta
 export TZ=US/Pacific
+
+export DIRCOLORS_BIN=dircolors
+
 if [[ $(uname) == "Darwin" ]] ; then 
     export SSL_CERT_FILE=/Users/jayalane/homebrew/etc/ca-certificates/cert.pem
     export SSL_CERT_DIR=/Users/jayalane/homebrew/etc/ca-certificates/certs
@@ -51,6 +54,7 @@ if [[ $(uname) == "Darwin" ]] ; then
     export DYLD_LIBRARY_PATH="/Users/jayalane/homebrew/opt/openssl@3/lib:$DYLD_LIBRARY_PATH"
     export DYLD_LIBRARY_PATH="$HOME/homebrew/Cellar/libgccjit/15.2.0/lib/gcc/current/:$DYLD_LIBRARY_PATH"
 
+    export DIRCOLORS_BIN=gdircolors
     export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
     # Start agent if no working agent exists at the fixed path
     ssh-add -l &>/dev/null
@@ -98,11 +102,11 @@ if [ "$EMACS" = "t" ] || [ "$INSIDE_EMACS" != "" ] ; then
   export PAGER=/bin/cat
   export EMACS=t
   echo "Emacs rules."
-  PS1='\W($SHLVL:\!)\$ '
+  PS1='\e[36m\W($SHLVL:\!)\$\e[0m '
 else 
-  eval $(/usr/bin/dircolors -b)
+  eval $($DIRCOLORS_BIN -b)
   alias ls='ls -F -lhartd --color -- '
-  PS1='\W($SHLVL:\!)\$ '
+  PS1='\[\e[36m\]\W($SHLVL:\!)\$\[\e[0m\] '
 fi
 
 alias vi='vim -X'
