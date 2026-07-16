@@ -24,7 +24,6 @@ export PATH=$PATH:~/.local/bin
 export WINEARCH=win32
 export WINEPREFIX="/home/lanstin/.wine"
 export WINE=wine-development
-#export TZ=Asia/Colcutta
 
 # WTF dashboard GitHub token (read from .netrc)
 export WTF_GITHUB_TOKEN=$(awk '/machine github.com/{for(i=1;i<=NF;i++)if($i=="password")print $(i+1)}' ~/.netrc 2>/dev/null)
@@ -46,6 +45,7 @@ export TZ=Asia/Calcutta
 export TZ=US/Pacific
 
 export DIRCOLORS_BIN=dircolors
+export LS=ls
 
 if [[ $(uname) == "Darwin" ]] ; then 
     export SSL_CERT_FILE=/Users/jayalane/homebrew/etc/ca-certificates/cert.pem
@@ -54,7 +54,10 @@ if [[ $(uname) == "Darwin" ]] ; then
     export DYLD_LIBRARY_PATH="/Users/jayalane/homebrew/opt/openssl@3/lib:$DYLD_LIBRARY_PATH"
     export DYLD_LIBRARY_PATH="$HOME/homebrew/Cellar/libgccjit/15.2.0/lib/gcc/current/:$DYLD_LIBRARY_PATH"
 
+    # two things from gnu/brew for colors
     export DIRCOLORS_BIN=gdircolors
+    export LS=gls
+
     export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
     # Start agent if no working agent exists at the fixed path
     ssh-add -l &>/dev/null
@@ -98,14 +101,14 @@ export PAGER=/usr/bin/less
 ignoreeof=10
 # set up the color-ls environment variables:
 if [ "$EMACS" = "t" ] || [ "$INSIDE_EMACS" != "" ] ; then
-  alias ls='ls -larthdF --color --'
+  alias ls="$LS -larthF --color --"
   export PAGER=/bin/cat
   export EMACS=t
   echo "Emacs rules."
   PS1='\e[36m\W($SHLVL:\!)\$\e[0m '
 else 
   eval $($DIRCOLORS_BIN -b)
-  alias ls='ls -F -lhartd --color -- '
+  alias ls="$LS -F -lhart --color -- "
   PS1='\[\e[36m\]\W($SHLVL:\!)\$\[\e[0m\] '
 fi
 
