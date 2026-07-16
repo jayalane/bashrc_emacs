@@ -512,6 +512,7 @@ apps are not started from a shell."
     shell-mode-hook
     eshell-mode-hook
     vterm-mode-hook
+    python-mode-hook
     go-mode-hook))
 
 ;; Enable visual-line-mode and line numbers for specific modes
