@@ -197,6 +197,8 @@ There are two things you can do about this warning:
 
 (require 'go-mode)
 (add-hook 'before-save-hook 'gofmt-before-save)
+(require 'go-eldoc)
+(add-hook 'go-mode-hook 'go-eldoc-setup)
 
 ;; Set frame colors - works for both regular Emacs and daemon/emacsclient
 (setq default-frame-alist
@@ -406,7 +408,7 @@ Positions frames along a diagonal from (200,20) down-left in steps of 20px."
    '(claude-code company company-go dash disk-usage ess ess
                  flycheck-golangci-lint flycheck-yamllint go
                  go-autocomplete go-autocomplete go-complete
-                 go-complete go-direx go-dlv go-errcheck
+                 go-complete go-direx go-dlv go-eldoc go-errcheck
                  go-expr-completion go-fill-struct go-gopath go-guru
                  go-guru go-mode go-rename go-stacktracer
                  go-stacktracer golden-ratio golint google-maps gptel
@@ -415,7 +417,7 @@ Positions frames along a diagonal from (200,20) down-left in steps of 20px."
                  markdown-mode matlab-mode memory-usage memory-usage
                  mines nov ox-epub protobuf-mode protobuf-mode slime
                  sudoku tree-sitter w3m yaml))
- '(send-mail-function 'mailclient-send-it))
+ '(send-mail-function 'smtpmail-send-it))
 ;;   '(claude-code company company-go disk-usage ess ess
 ;;                 flycheck-golangci-lint flycheck-yamllint go
 ;;                 go-autocomplete go-autocomplete go-complete
