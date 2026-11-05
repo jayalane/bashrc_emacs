@@ -14,7 +14,7 @@ export PATH=/Applications/Emacs.app/Contents/MacOS/bin-x86_64-10_14:$PATH
 export PATH=/usr/local/bin:$PATH
 export PATH=/usr/local/go/bin/:$PATH
 export PATH=~/google-cloud-sdk/bin:$PATH
-export PATH=$PATH:~/Library/Python/3.14/bin/
+export PATH=$PATH:~/Library/Python/3.15/bin/
 export PATH="~/homebrew/opt/openjdk/bin:$PATH"
 
 export GOPATH=~/go
@@ -53,6 +53,7 @@ if [[ $(uname) == "Darwin" ]] ; then
     export DYLD_LIBRARY_PATH="$HOME/homebrew/opt/unixodbc/lib:$DYLD_LIBRARY_PATH"
     export DYLD_LIBRARY_PATH="/Users/jayalane/homebrew/opt/openssl@3/lib:$DYLD_LIBRARY_PATH"
     export DYLD_LIBRARY_PATH="$HOME/homebrew/Cellar/libgccjit/15.2.0/lib/gcc/current/:$DYLD_LIBRARY_PATH"
+    export DYLD_LIBRARY_PATH="$HOME/Cellar/tree-sitter/0.27.1/lib/:$DYLD_LIBRARY_PATH"
 
     # two things from gnu/brew for colors
     export DIRCOLORS_BIN=gdircolors
