@@ -1,4 +1,12 @@
 #! /bin/bash
+_hh_now=$(date '+%Y-%m-%d %H|%Y-%m-%d %-I:%M %p')
+_hh_last=
+read -r _hh_last 2>/dev/null < ~/.hist_hour_stamp
+if [ "${_hh_now%%|*}" != "$_hh_last" ]; then
+    echo "${_hh_now%%|*}" > ~/.hist_hour_stamp
+    history -s "# date ${_hh_now#*|} ${TZ:-$(date +%Z)}"
+fi
+unset _hh_now _hh_last
 history -a; history -c; history -r
 printf '\033[36m%s\033[0m\n' "$(date)"
 printf '\033[33m%s\033[0m\n' "$PWD"
