@@ -405,8 +405,8 @@ Positions frames along a diagonal from (200,20) down-left in steps of 20px."
      (tramp-connection-local-default-system-profile
       (path-separator . ":") (null-device . "/dev/null"))))
  '(package-selected-packages
-   '(claude-code company company-go dash disk-usage ess ess
-                 flycheck-golangci-lint flycheck-yamllint go
+   '(agent-shell claude-code company company-go csv-mode dash disk-usage
+                 ess ess flycheck-golangci-lint flycheck-yamllint go
                  go-autocomplete go-autocomplete go-complete
                  go-complete go-direx go-dlv go-eldoc go-errcheck
                  go-expr-completion go-fill-struct go-gopath go-guru
@@ -470,6 +470,41 @@ apps are not started from a shell."
     (setenv "PATH" path-from-shell)
     (setq exec-path (split-string path-from-shell path-separator))))
 
+(setenv "REDSHIFT_PROXY_HMAC_SECRET" "a-good-secret")
+(require 'subr-x)                       ; string-trim, string-empty-p
+
+(defun setenv-from-file (var file &optional required)
+  "Set environment variable VAR to the trimmed contents of FILE.
+
+Leading and trailing whitespace is stripped -- a trailing newline in a
+password file otherwise causes authentication failures that are very hard
+to diagnose.
+
+Returns non-nil on success.  If FILE is missing, unreadable, or empty,
+VAR is left untouched and nil is returned, after a message; when REQUIRED
+is non-nil an error is signalled instead.  The default is deliberately
+non-fatal so that an init file committed to git still loads on a machine
+where the secret file is absent."
+  (let ((path (expand-file-name file)))
+    (cond
+     ((not (file-readable-p path))
+          (error "setenv-from-file: cannot read %s (needed for %s)" path var))
+     (t
+      ;; -literally: no coding-system decoding, no format conversion, no
+      ;; `find-file-hook'.  If a secret is non-ASCII, use plain
+      ;; `insert-file-contents' here so it is decoded as text instead.
+      (let ((val (with-temp-buffer
+                   (insert-file-contents-literally path)
+                   (string-trim (buffer-string)))))
+        (cond
+         ((string-empty-p val)
+          (error "setenv-from-file: %s is empty (needed for %s)" path var))
+         (t
+          (setenv var val))))))))
+
+
+(setenv-from-file "REDSHIFT_PROXY_CLIENT_PASSWORD" "~/.config/level-tools/redshift_proxy_client_password")
+
 (setq indent-tabs-mode nil)
 (setq-default indent-tabs-mode nil)
 (display-time)
@@ -489,9 +524,8 @@ apps are not started from a shell."
 (set-exec-path-from-shell-PATH)
 
 (setenv "SUDO_PROMPT" "[sudo] password for %u: ")
-(setenv  "DYLD_LIBRARY_PATH" "/Users/jayalane/homebrew/Cellar/libgccjit/15.2.0/lib/gcc/current/:$DYLD_LIBRARY_PATH")
+(setenv  "DYLD_LIBRARY_PATH" "/Users/jayalane/homebrew/Cellar/libgccjit/15.2.0/lib/gcc/current/:$DYLD_LIBRARY_PATH" t)
 
-(setenv "GODEBUG" "x509sha1=1")
 (defun comint-password-function-impl (a)
   "interact password"
   "bad-password") ;; set this to the desired password (simple simple function)
